@@ -1,4 +1,3 @@
 langchain==0.1.16
-openai
-wikipedia
+langchain-community
 python-dotenv

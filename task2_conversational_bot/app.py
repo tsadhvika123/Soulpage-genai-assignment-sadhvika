@@ -1,37 +1,38 @@
-from langchain.chains import ConversationChain
+from langchain_community.chat_models import ChatOllama
 from langchain.memory import ConversationBufferMemory
-from langchain.chat_models import ChatOpenAI
-from langchain.utilities import WikipediaAPIWrapper
+from langchain.chains import ConversationChain
 
-llm = ChatOpenAI(temperature=0)
-memory = ConversationBufferMemory()
+def main():
+    # Connect to Phi via Ollama
+    llm = ChatOllama(
+        model="phi",
+        temperature=0
+    )
 
-wiki = WikipediaAPIWrapper()
+    # Conversation memory
+    memory = ConversationBufferMemory(
+        return_messages=True
+    )
 
-conversation = ConversationChain(
-    llm=llm,
-    memory=memory,
-    verbose=True
-)
+    # Conversation chain
+    conversation = ConversationChain(
+        llm=llm,
+        memory=memory,
+        verbose=True
+    )
 
-def start_chat():
-    print("🤖 Conversational Knowledge Bot")
-    print("Type 'exit' to quit\n")
+    print("🤖 Conversational Knowledge Bot (type 'exit' to quit)\n")
 
     while True:
         user_input = input("You: ")
 
-        if user_input.lower() == "exit":
+        if user_input.lower() in ["exit", "quit"]:
+            print("Bot: Goodbye! 👋")
             break
 
-        wiki_info = wiki.run(user_input)
+        response = conversation.predict(input=user_input)
+        print(f"Bot: {response}\n")
 
-        response = conversation.predict(
-            input=f"{user_input}\n\nReference Information:\n{wiki_info}"
-        )
-
-        print("Bot:", response)
-        print()
 
 if __name__ == "__main__":
-    start_chat()
+    main()
